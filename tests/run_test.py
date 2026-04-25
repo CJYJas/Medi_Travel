@@ -9,7 +9,7 @@ from utils.translator import translate_medical_text
 from utils.parser import get_concise_json
 
 # 🔹 Agents
-from agents.logistics_analyzer import get_transport_requirements
+from agents.logistics_agent import get_transport_requirements
 from agents.flight_agent import get_flight_options
 
 

@@ -1,0 +1,80 @@
+
+    <html>
+    <head>
+        <title>Medical AI - Doctor Database</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 20px; }
+            h1 { color: #2c3e50; text-align: center; }
+            .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
+            table { width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+            th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background-color: #8e44ad; color: white; }
+            tr:hover { background-color: #f5f5f5; }
+            .hosp-badge { background-color: #2980b9; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+            .tier-badge { background-color: #16a085; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        </style>
+    </head>
+    <body>
+        <h1>🩺 Live Doctor Vector Database (ChromaDB)</h1>
+        <div class="subtitle">Granular Specialist Matching Engine</div>
+        <table>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Sub-Specialty</th>
+                <th>Hospital Affiliation</th>
+                <th>Foreigner Tier</th>
+                <th>Raw RAG Vector (AI Knowledge)</th>
+            </tr>
+    
+            <tr>
+                <td><strong>Dr. Ahmad Nizar Jamaluddin</strong></td>
+                <td>Interventional Cardiology</td>
+                <td><span class="hosp-badge">Prince Court Medical Centre</span></td>
+                <td><span class="tier-badge">Premium Private</span></td>
+                <td style="font-size: 13px; color: #555;">Doctor Name: Dr. Ahmad Nizar Jamaluddin<br>Sub-Specialty: Interventional Cardiology<br>Affiliated Hospital: Prince Court Medical Centre<br>Medical Tourist Tier: Premium Private<br>Foreigner Pricing: Luxury experience, highest foreigner rates. Est: USD $150 - $300.</td>
+            </tr>
+        
+            <tr>
+                <td><strong>Dato' Dr. David Chew</strong></td>
+                <td>Electrophysiology (Cardiology)</td>
+                <td><span class="hosp-badge">Gleneagles Hospital</span></td>
+                <td><span class="tier-badge">Premium Private</span></td>
+                <td style="font-size: 13px; color: #555;">Doctor Name: Dato' Dr. David Chew<br>Sub-Specialty: Electrophysiology (Cardiology)<br>Affiliated Hospital: Gleneagles Hospital<br>Medical Tourist Tier: Premium Private<br>Foreigner Pricing: Luxury experience, highest foreigner rates. Est: USD $150 - $300.</td>
+            </tr>
+        
+            <tr>
+                <td><strong>Dr. Azura Deniel</strong></td>
+                <td>Clinical Oncology (Breast Cancer)</td>
+                <td><span class="hosp-badge">Institut Kanser Negara (IKN)</span></td>
+                <td><span class="tier-badge">Government / Semi-Gov</span></td>
+                <td style="font-size: 13px; color: #555;">Doctor Name: Dr. Azura Deniel<br>Sub-Specialty: Clinical Oncology (Breast Cancer)<br>Affiliated Hospital: Institut Kanser Negara (IKN)<br>Medical Tourist Tier: Government / Semi-Gov<br>Foreigner Pricing: High-quality specialized care. Rates are NOT subsidized for foreigners. Est: USD $50 - $100. May have longer wait times.</td>
+            </tr>
+        
+            <tr>
+                <td><strong>Datuk Dr. Sanjiv Joshi</strong></td>
+                <td>Paediatric Cardiology</td>
+                <td><span class="hosp-badge">Pantai Hospital</span></td>
+                <td><span class="tier-badge">Standard Private</span></td>
+                <td style="font-size: 13px; color: #555;">Doctor Name: Datuk Dr. Sanjiv Joshi<br>Sub-Specialty: Paediatric Cardiology<br>Affiliated Hospital: Pantai Hospital<br>Medical Tourist Tier: Standard Private<br>Foreigner Pricing: Fast service, standard foreigner rates. Est: USD $80 - $150.</td>
+            </tr>
+        
+            <tr>
+                <td><strong>Dr. Chong Kwang</strong></td>
+                <td>Medical Oncology</td>
+                <td><span class="hosp-badge">Sunway Medical Centre</span></td>
+                <td><span class="tier-badge">Standard Private</span></td>
+                <td style="font-size: 13px; color: #555;">Doctor Name: Dr. Chong Kwang<br>Sub-Specialty: Medical Oncology<br>Affiliated Hospital: Sunway Medical Centre<br>Medical Tourist Tier: Standard Private<br>Foreigner Pricing: Fast service, standard foreigner rates. Est: USD $80 - $150.</td>
+            </tr>
+        
+            <tr>
+                <td><strong>Dr. Tan Jian</strong></td>
+                <td>Cardiothoracic Surgery</td>
+                <td><span class="hosp-badge">Institut Jantung Negara (IJN)</span></td>
+                <td><span class="tier-badge">Government / Semi-Gov</span></td>
+                <td style="font-size: 13px; color: #555;">Doctor Name: Dr. Tan Jian<br>Sub-Specialty: Cardiothoracic Surgery<br>Affiliated Hospital: Institut Jantung Negara (IJN)<br>Medical Tourist Tier: Government / Semi-Gov<br>Foreigner Pricing: High-quality specialized care. Rates are NOT subsidized for foreigners. Est: USD $50 - $100. May have longer wait times.</td>
+            </tr>
+        
+        </table>
+    </body>
+    </html>
+    

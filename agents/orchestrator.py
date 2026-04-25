@@ -20,20 +20,19 @@ def orchestrate_packages(medical_data: Dict, logistics_data: Dict, origin_countr
     packages = []
     
     # We will generate up to 3 packages by combining these options
-    for i, hospital in enumerate(hospitals):
+    for i, doc in enumerate(hospitals):
         
         # Determine top charity name
         charity_names = [c['name'] for c in charities]
         charity_text = f"Charities: {', '.join(charity_names)}" if charity_names else "No specific charities"
         
         prompt = (
-            f"You are a medical travel coordinator. "
-            f"Patient Condition: {medical_data.get('condition')}. Origin: {origin_country}. Budget: ${budget_usd} USD.\n"
-            f"Package {i+1} includes:\n"
-            f"- Hospital: {hospital.get('name')} (Specializes in {hospital.get('specialties')}, Consultation: {hospital.get('base_consultation_fee')})\n"
-            f"- Transport: {logistics.get('recommendation')}\n"
+            f"Context: Travel coordination for an international visitor to Malaysia.\n"
+            f"Destination: {doc.get('hospital')}. Origin: {origin_country}. Budget: ${budget_usd} USD.\n"
+            f"Specialist: {doc.get('name')} ({doc.get('specialty')})\n"
+            f"Transport: {logistics.get('recommendation')}\n"
             f"- {charity_text}\n\n"
-            f"Write exactly two sentences explaining why this complete package (hospital + transport + charity) is ideal for the patient, keeping their budget in mind."
+            f"Write two sentences for a travel brochure highlighting why this coordination of hospital reputation and logistics is a great value option."
         )
         
         try:
@@ -49,7 +48,7 @@ def orchestrate_packages(medical_data: Dict, logistics_data: Dict, origin_countr
         package = {
             "package_id": f"PKG_{i+1}",
             "package_reasoning": package_reasoning,
-            "hospital": hospital,
+            "specialist": doc,
             "flight_logistics": logistics,
             "recommended_charities": charities
         }

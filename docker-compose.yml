@@ -1,19 +1,31 @@
 version: '3.8'
 
 services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
   api:
     build: .
+    container_name: medical_api
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     environment:
-      # Use host's Ollama instance (host.docker.internal works for Windows/Mac Docker Desktop)
-      - OLLAMA_HOST=http://host.docker.internal:11434
-      # Overwrite Windows paths so the Linux container uses its built-in tools
+      # Point to the ollama container instead of the host
+      - OLLAMA_HOST=http://ollama:11434
       - TESSERACT_PATH=tesseract
       - POPPLER_PATH=
-      # Disable ChromaDB telemetry to prevent posthog crash
       - ANONYMIZED_TELEMETRY=False
     env_file:
       - .env
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_data:

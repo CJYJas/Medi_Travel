@@ -2,14 +2,16 @@ import re
 import json
 import ollama
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class MedicalRecord(BaseModel):
-    condition: str = Field(description="The primary medical diagnosis or condition")
-    severity: str = Field(description="Low, Moderate, High, or Critical")
-    age_group: str = Field(description="Infant, Child, Adult, or Senior")
-    urgency: str = Field(description="How fast they need a doctor: Low, Medium, High")
-    is_cardio_oncology: bool = Field(description="True if the case relates to Heart or Cancer")
-    raw_summary: str = Field(description="A 1-sentence summary of the extracted text")
+    condition: str = Field(default="Unknown")
+    sub_specialty_inference: str = Field(default="General")
+    severity: str = Field(default="Moderate")
+    age_group: Optional[str] = Field(default="Unknown")
+    urgency: Optional[str] = Field(default="Unknown")
+    is_cardio_oncology: bool = Field(default=False)
+    raw_summary: Optional[str] = Field(default="")
 
 def get_concise_json(english_text):
     """Uses Llama 3.2 to structure the translated text into a valid JSON."""
@@ -17,12 +19,15 @@ def get_concise_json(english_text):
     content = "" # Initialize empty so the except block doesn't crash
 
     system_prompt = (
-        "You are a strict medical data extractor. Return ONLY a flat JSON object. "
+        "You are a strict medical data extractor for a medical tourism app. "
+        "Analyze the text and return ONLY a flat JSON object.\n"
         "Rules for keys:\n"
-        "1. 'condition', 'severity', 'age_group', 'urgency', 'raw_summary': Use 'Unknown' if missing.\n"
-        "2. 'is_cardio_oncology': This MUST be a boolean (true or false). "
-        "Set to true ONLY if the text mentions cancer, tumors, heart issues, or cardiology. Otherwise, set to false.\n"
-        "3. Return ONLY the JSON."
+        "1. 'condition': The specific disease or symptom (e.g. Lung Cancer, Heart Failure).\n"
+        "2. 'sub_specialty_inference': The department needed. Choose from: Oncology, Cardiology, Orthopedics, Pediatrics, or General.\n"
+        "3. 'severity': Low, Moderate, High, or Critical.\n"
+        "4. 'is_cardio_oncology': Set to true if the text mentions cancer, tumors, or heart issues.\n"
+        "5. If a value is missing, use 'Unknown'.\n"
+        "Return ONLY the JSON."
     )
 
     try:
@@ -68,6 +73,7 @@ def get_concise_json(english_text):
         # Return a dictionary that matches your Pydantic schema so the pipeline can continue
         return {
             "condition": "Extraction Error",
+            "sub_specialty_inference": "General",
             "severity": "Unknown",
             "age_group": "Unknown",
             "urgency": "Unknown",

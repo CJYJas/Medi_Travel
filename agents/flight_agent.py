@@ -1,19 +1,20 @@
 import os
 from typing import Dict, List
-from serpapi import Client
+from serpapi import GoogleSearch
 from dotenv import load_dotenv
 
 load_dotenv()
 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
-def get_serpapi_client():
+def get_serpapi_search(params):
     if not SERPAPI_KEY:
         return None
     try:
-        return Client(api_key=SERPAPI_KEY)
+        params["api_key"] = SERPAPI_KEY
+        return GoogleSearch(params)
     except Exception as e:
-        print(f"SerpApi Client Error: {e}")
+        print(f"SerpApi Error: {e}")
         return None
 
 def find_flights(origin_country: str, destination_airport: str = "KUL", date: str = None, adults: int = 1, max_offers: int = 3) -> List[Dict]:
@@ -42,22 +43,22 @@ def find_flights(origin_country: str, destination_airport: str = "KUL", date: st
     
     origin_airport = iata_mapping.get(origin_country.lower(), "BKK")
     
-    serpapi_client = get_serpapi_client()
+    params = {
+        "engine": "google_flights",
+        "departure_id": origin_airport,
+        "arrival_id": destination_airport,
+        "outbound_date": date,
+        "currency": "USD",
+        "hl": "en",
+        "adults": adults,
+        "type": "2" # One Way
+    }
     
-    if serpapi_client:
+    search = get_serpapi_search(params)
+    
+    if search:
         try:
-            params = {
-                "engine": "google_flights",
-                "departure_id": origin_airport,
-                "arrival_id": destination_airport,
-                "outbound_date": date,
-                "currency": "USD",
-                "hl": "en",
-                "adults": adults,
-                "type": "2" # One Way
-            }
-            
-            response = serpapi_client.search(params)
+            response = search.get_dict()
             
             best_flights = response.get("best_flights", [])
             other_flights = response.get("other_flights", [])

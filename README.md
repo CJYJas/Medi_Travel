@@ -1,50 +1,80 @@
-# AI Medical Matching Pipeline
+# 🩺 ASEAN Medical AI Matching Backend
 
-A multi-agent system designed to match patients with medical care, logistics, and financial aid in the ASEAN region.
+A sophisticated multi-layer AI agentic system designed to match international patients (Medical Tourists) with specialized healthcare providers, logistical support, and financial aid in Malaysia.
 
-## 🚀 Current Status
+## 🚀 Recent Progress (Update for Teammates)
+We have successfully pivoted the core architecture from a simple "Hospital Search" to a highly granular **Doctor-Centric RAG System**.
 
-**Logistics & Flight Agent:** ✅ Fully Settled!
-- Replaced hardcoded transport files with a centralized `flight_agent.py`.
-- Integrated **SerpApi (Google Flights)** to fetch 100% real airline names, dynamic prices, and exact departure/arrival times.
-- Implemented intelligent "Stretcher" handling (generates pre-filled Air Ambulance email drafts instead of static prices).
-- Built-in "Mock Mode" to save API credits during testing.
+## 🧠 AI Architecture & Data Layers
 
-## ⚙️ Setup Instructions
+Our system is built as a **Multi-Layer Agentic Orchestrator**. Each layer uses specific AI tools to ensure accuracy and transparency.
 
-### 1. Prerequisites
-Ensure you have the following installed on your machine:
-- **Python 3.x**
-- **Ollama:** Required for the local AI translation and orchestration steps. (Must be running in the background before executing the pipeline).
-- **Poppler:** Required for PDF OCR extraction. Make sure `C:\poppler\bin` is properly configured in your system.
+### Layer 1: Medical Specialist Matching
+*   **AI Tools**: **Ollama (Llama 3.2:3b)** + **ChromaDB (Vector RAG)**.
+*   **How it Works**: 
+    1.  The **Medical Agent** uses LLM reasoning to infer the specific sub-specialty needed (e.g., "Electrophysiology" from a general heart report).
+    2.  It performs a **Semantic Search** against our centralized Doctor RAG database.
+*   **Data Retrieval**: Real-time retrieval from the `malaysia_doctors` vector collection, populated by our custom scraping pipeline.
 
-### 2. Install Dependencies
-Install the required Python packages:
+### Layer 2: Logistics & Flight Intelligence
+*   **AI Tools**: **SerpApi (Google Flights API)** + **Logistic Reasoning Engine**.
+*   **How it Works**: 
+    1.  Analyzes the patient's medical chart to determine mobility (Ambulatory vs. Stretcher).
+    2.  If the patient is ambulatory, it fetches **LIVE flight data** (prices, times, airlines).
+    3.  If the patient requires a stretcher, it automatically generates a professional **Medical Charter Email Draft**.
+*   **Data Retrieval**: Real-time API calls to Google Flights.
+
+### Layer 3: Financial Aid & Charity Matching
+*   **AI Tools**: **Ollama (Eligibility Reasoning)**.
+*   **How it Works**: 
+    1.  Matches the patient's country of origin and medical condition against local Malaysian NGO rules.
+    2.  Provides a reasoned explanation of why a specific charity might cover the patient's costs.
+*   **Data Retrieval**: Expert-curated knowledge base stored in `data/charities.json`.
+
+---
+
+## 🛠️ Project Structure
+- `app.py`: Main FastAPI entry point.
+- `api_test.py`: Simple script to test the end-to-end matching flow without local dependencies.
+- `agents/`:
+  - `medical_agent.py`: Queries the Doctor RAG database.
+  - `logistics_agent.py`: Handles transport analysis and flight search.
+  - `charity_agent.py`: Matches patients with local NGOs/Charities.
+  - `orchestrator.py`: Merges agent outputs into packages.
+- `pipeline/`:
+  - `ingest_doctors.py`: The scraping and RAG injection engine.
+  - `generate_report.py`: Creates the visual HTML dashboard for demo/judging.
+- `reports/`: Stores the visual `db_dashboard.html`.
+- `utils/`: Core processing tools (OCR, Translation, Medical Parsing).
+
+---
+
+## ⚙️ How to Run & Test
+
+### 1. Start the Backend (Docker)
+Ensure Docker Desktop is running and Ollama is open on your host.
 ```bash
-pip install serpapi python-dotenv
-# Add any other required dependencies here or use requirements.txt
+docker-compose up --build
 ```
 
-### 3. Environment Variables
-Create a `.env` file in the root directory. You will need a SerpApi key for live flight data:
-
-```env
-SERPAPI_KEY=your_serpapi_key_here
-```
-
-### 4. Running the Pipeline
-Before running, **make sure Ollama is open and running in the background.**
-
+### 2. Ingest Data (One-time)
+Populate the centralized database with real doctor profiles:
 ```bash
-python main_logic.py
+docker exec -it ai_medical_matching-api-1 python pipeline/ingest_doctors.py
 ```
 
-## 🛠️ Testing & Saving API Credits (Mock Mode)
-SerpApi provides 100 free searches per month. To avoid burning credits while testing other agents (like the Medical or Charity agents):
+### 3. Generate Visual Dashboard
+To show the judges the data granularity:
+```bash
+docker exec -it ai_medical_matching-api-1 python pipeline/generate_report.py
+```
+*Open `reports/db_dashboard.html` in your browser to view.*
 
-1. Open your `.env` file.
-2. Comment out your SerpApi key by adding a `#`:
-   ```env
-   #SERPAPI_KEY=your_serpapi_key_here
-   ```
-3. Run the pipeline. The `flight_agent.py` will automatically detect that the key is missing and fall back to using **Mock Data** (costs 0 credits).
+### 4. Test the Matching Logic
+Run the end-to-end demo script:
+```bash
+python tests/test_vietnamese_flow.py
+```
+
+---
+**Build for ASEAN AI Hackathon 2026**

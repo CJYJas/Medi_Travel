@@ -12,7 +12,7 @@ from utils.translator import translate_medical_text
 from utils.parser import get_concise_json, scrub_raw_text
 
 # Import agents
-from agents.logistics_analyzer import get_transport_requirements
+from agents.logistics_agent import get_transport_requirements
 from agents.orchestrator import orchestrate_packages
 
 app = FastAPI(title="Malaysia Medical Match API", version="1.0.0")
@@ -132,4 +132,4 @@ async def full_pipeline(
             os.remove(file_location)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
