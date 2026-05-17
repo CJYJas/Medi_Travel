@@ -17,18 +17,34 @@ ASEAN Medical Match is a cutting-edge, agentic AI platform designed for the ASEA
 
 ```text
 ai_medical_matching/
-|-- app.py                          FastAPI entrypoint and API routes
-|-- agents/                         Independent agents (Medical, Logistics, Charity, etc.)
-|-- data/                           Runtime stores (ChromaDB, SQLite mock DB)
-|-- frontend/                       React (Vite) Frontend application
+|-- app.py                          FastAPI entrypoint and thin route layer
+|-- api_models.py                   Shared Pydantic request/response models
+|-- agents/                         Domain agents (medical, logistics, charity, orchestration)
+|-- services/                       Backend workflow services extracted from app.py
+|-- utils/                          Shared helpers (OCR, LLM, privacy, DB, letters)
+|-- pipeline/                       Data ingestion and report-generation scripts
+|-- tests/                          Backend tests and fixtures
+|-- frontend/                       React + Vite frontend
+|   |-- src/
+|   |   |-- App.jsx                Frontend workflow controller
+|   |   |-- config.js              Shared UI constants and API config
+|   |   `-- components/            Reusable UI components
+|-- data/                           Runtime stores and mock input files
 |-- model_cache/                    Local embedding / ONNX cache
-|-- pipeline/                       Ingestion scripts (Doctors, Charities, Mock Data)
 |-- reports/                        Generated HTML dashboards
-|-- tests/                          Testing framework and fixtures
-|-- utils/                          Shared helpers (OCR, LLM, Privacy, Letter Generation)
-|-- docker-compose.yml              Docker orchestration
+|-- docker-compose.yml              Full stack orchestration
 `-- Dockerfile                      Backend container definition
 ```
+
+## Code Organization
+
+- `app.py` owns HTTP routing only and delegates heavy workflow logic to services.
+- `api_models.py` centralizes FastAPI/Pydantic request models so endpoint contracts are easy to find.
+- `services/pipeline_service.py` handles extraction, package matching, translation of package payloads, and the upload-to-package flow.
+- `services/translation_service.py` handles batch UI translation fallback logic.
+- `services/letter_service.py` owns preview and PDF letter generation.
+- `agents/` contains domain-specific reasoning and matching modules.
+- `frontend/src/components/` contains presentational React components, while `frontend/src/App.jsx` coordinates state and API calls.
 
 ## Architecture
 
@@ -121,6 +137,25 @@ To deliver a premium, highly secure, and compliant experience, the system uses a
 | `POST` | `/api/v1/translate-text` | Display-text translation |
 | `POST` | `/api/v1/full-pipeline` | One-shot upload-to-package flow |
 
+## Running the Full App
+
+From the project root:
+
+```bash
+docker-compose up --build
+```
+
+Services:
+
+- Frontend: [http://localhost:8080](http://localhost:8080)
+- Backend API: [http://localhost:8000](http://localhost:8000)
+
+Stop the full stack with:
+
+```bash
+docker-compose down
+```
+
 ## Local Setup
 
 ### Requirements
@@ -169,13 +204,23 @@ python pipeline/ingest_doctors.py
 python pipeline/ingest_charities.py
 ```
 
-### Run
+### Run Backend Only
 
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Open the tester at [http://localhost:8000/tester](http://localhost:8000/tester).
+
+### Run Frontend Only
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The Vite dev server usually runs at [http://localhost:5173](http://localhost:5173).
 
 ## Deployment
 
@@ -197,10 +242,18 @@ The Nginx configuration in the frontend container automatically proxies API requ
 
 ## Tests and Debugging
 
-Main test:
+Backend test:
 
 ```bash
 python -m pytest tests/test_pipeline.py -v
+```
+
+Frontend checks:
+
+```bash
+cd frontend
+npm run build
+npm run lint
 ```
 
 Useful helper scripts:
@@ -218,4 +271,5 @@ python tests/dev_tools/test_api.py
 
 - `model_cache/`, `data/chroma_db/`, and generated `reports/` are runtime artifacts, not hand-edited source files.
 - `__pycache__/`, `.pytest_cache/`, and temporary OCR files can be safely deleted.
+- Temporary files such as `temp_*.pdf` or `temp_full_*` are runtime leftovers and should not be treated as source files.
 - External Windows binary folders such as local Poppler bundles should stay out of git and be referenced through `.env`.

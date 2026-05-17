@@ -25,6 +25,7 @@ sys.modules.setdefault("ollama", types.ModuleType("ollama"))
 
 requests_stub = types.ModuleType("requests")
 requests_stub.get = lambda *args, **kwargs: None
+requests_stub.Session = type("Session", (), {"__init__": lambda self, *args, **kwargs: None, "request": lambda *args, **kwargs: None, "mount": lambda *args, **kwargs: None, "close": lambda *args, **kwargs: None, "headers": {}})
 sys.modules.setdefault("requests", requests_stub)
 
 dotenv_stub = types.ModuleType("dotenv")

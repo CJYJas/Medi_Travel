@@ -109,7 +109,7 @@ def _call_ollama(prompt):
                 "prompt": prompt,
                 "stream": False
             },
-            timeout=10
+            timeout=120
         )
         if res.status_code == 200:
             return res.json().get("response", "").strip()
