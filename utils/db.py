@@ -1,6 +1,8 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
-from sqlalchemy.orm import sessionmaker, declarative_base
+from typing import Dict, List
+
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/medical_matching")
 
@@ -12,11 +14,13 @@ else:
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+
 
 class Match(Base):
     __tablename__ = "matches"
@@ -30,6 +34,7 @@ class Match(Base):
     urgency = Column(String)
     feedback = Column(Text)
 
+
 class Selection(Base):
     __tablename__ = "selections"
     id = Column(Integer, primary_key=True, index=True)
@@ -37,8 +42,10 @@ class Selection(Base):
     doctor_id = Column(String)
     charity_id = Column(String)
 
+
 def init_db():
     Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     db = SessionLocal()
@@ -47,43 +54,64 @@ def get_db():
     finally:
         db.close()
 
-def log_match(session_id: str, status: str, condition: str, hospital: str, flight: str, charity: str, urgency: str) -> int:
+
+def log_match(
+    session_id: str,
+    status: str,
+    condition: str,
+    hospital: str,
+    flight: str,
+    charity: str,
+    urgency: str,
+) -> int:
     db = SessionLocal()
-    new_match = Match(
-        session_id=session_id,
-        status=status,
-        condition=condition,
-        hospital=hospital,
-        flight=flight,
-        charity=charity,
-        urgency=urgency,
-        feedback=""
-    )
-    db.add(new_match)
-    db.commit()
-    db.refresh(new_match)
-    db.close()
-    return new_match.id
+    try:
+        new_match = Match(
+            session_id=session_id,
+            status=status,
+            condition=condition,
+            hospital=hospital,
+            flight=flight,
+            charity=charity,
+            urgency=urgency,
+            feedback="",
+        )
+        db.add(new_match)
+        db.commit()
+        db.refresh(new_match)
+        return new_match.id
+    finally:
+        db.close()
+
 
 def update_feedback(match_id: int, feedback: str, new_status: str = "edited"):
     db = SessionLocal()
-    match = db.query(Match).filter(Match.id == match_id).first()
-    if match:
-        match.feedback = feedback
-        match.status = new_status
-        db.commit()
-    db.close()
+    try:
+        match = db.query(Match).filter(Match.id == match_id).first()
+        if match:
+            match.feedback = feedback
+            match.status = new_status
+            db.commit()
+    finally:
+        db.close()
 
-def get_few_shot_feedback(condition: str):
+
+def get_few_shot_feedback(condition: str) -> List[Dict[str, str]]:
     db = SessionLocal()
-    matches = db.query(Match).filter(
-        Match.status == 'edited',
-        Match.feedback != '',
-        Match.condition.ilike(f"%{condition}%")
-    ).limit(5).all()
-    results = [{"condition": m.condition, "feedback": m.feedback} for m in matches]
-    db.close()
-    return results
+    try:
+        matches = (
+            db.query(Match)
+            .filter(
+                Match.status == "edited",
+                Match.feedback != "",
+                Match.condition.ilike(f"%{condition}%"),
+            )
+            .limit(5)
+            .all()
+        )
+        return [{"condition": match.condition, "feedback": match.feedback} for match in matches]
+    finally:
+        db.close()
 
-# Initialize on import
+
 init_db()
