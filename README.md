@@ -47,33 +47,7 @@ ai_medical_matching/
 - `frontend/src/components/` contains presentational React components, while `frontend/src/App.jsx` coordinates state and API calls.
 
 ## Architecture
-
-```mermaid
-flowchart TD
-    A["Chart Upload (React Frontend)"] --> B["OCR Engine<br/>utils/ocr_engine.py"]
-    B --> C["Privacy Scrubber<br/>utils/privacy.py"]
-    C --> D["Translation Layer<br/>Ollama (Local) / Gemini"]
-    D --> E["Medical Parser<br/>utils/parser.py"]
-    E --> F["Clinical Gap Check<br/>utils/llm.py"]
-    F --> G["Orchestrator<br/>agents/orchestrator.py"]
-    G --> H["Hospital Retrieval<br/>agents/medical_agent.py"]
-    G --> I["Logistics + Route<br/>agents/logistics_agent.py"]
-    G --> J["Charity Matching<br/>agents/charity_agent.py"]
-    H --> K["Reranker<br/>agents/rerank_agent.py"]
-    I --> L["Package Assembly"]
-    J --> L
-    K --> L["Package Assembly"]
-    L --> M["React Frontend Response"]
-    L --> N["Letter Generation<br/>utils/letter_generator.py"]
-    N --> O["Download Endpoints (3 PDFs)"]
-
-    P["Ollama (llama3.2:3b)"] --> D
-    P --> N
-    Q["ChromaDB<br/>data/chroma_db"] --> H
-    Q --> J
-    R["SQLite Match Log<br/>data/mock_db.sqlite"] --> G
-    S["Tavily API"] --> M
-```
+<img width="1536" height="1024" alt="WhatsApp Image 2026-05-10 at 22 24 51" src="https://github.com/user-attachments/assets/3631c131-ea6c-4908-9d85-3183c2c429ff" />
 
 ## Data Sources & Integration
 
