@@ -36,18 +36,8 @@ ai_medical_matching/
 `-- Dockerfile                      Backend container definition
 ```
 
-## Code Organization
-
-- `app.py` owns HTTP routing only and delegates heavy workflow logic to services.
-- `api_models.py` centralizes FastAPI/Pydantic request models so endpoint contracts are easy to find.
-- `services/pipeline_service.py` handles extraction, package matching, translation of package payloads, and the upload-to-package flow.
-- `services/translation_service.py` handles batch UI translation fallback logic.
-- `services/letter_service.py` owns preview and PDF letter generation.
-- `agents/` contains domain-specific reasoning and matching modules.
-- `frontend/src/components/` contains presentational React components, while `frontend/src/App.jsx` coordinates state and API calls.
-
 ## Architecture
-<img width="1536" height="1024" alt="WhatsApp Image 2026-05-10 at 22 24 51" src="https://github.com/user-attachments/assets/3631c131-ea6c-4908-9d85-3183c2c429ff" />
+<img width="1536" height="1024" alt="WhatsApp Image 2026-05-10 at 22 24 51" src="https://github.com/user-attachments/assets/118437c3-5d7b-4c0f-ad39-6dbeb122cf45" />
 
 ## Data Sources & Integration
 
